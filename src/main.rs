@@ -16,7 +16,7 @@ fn main() {
 
     let clone = first.clone();
 
-    let node = add_two_numbers(Some(Box::new(first)), Some(Box::new(clone)));
+    let node = add_two_numbers2(Some(Box::new(first)), Some(Box::new(clone)));
 
     println!("{:?}", node);
 }
@@ -72,6 +72,42 @@ impl ListNode {
     fn new(val: i32) -> Self {
         ListNode { next: None, val }
     }
+}
+
+pub fn add_two_numbers2(
+    l1: Option<Box<ListNode>>,
+    l2: Option<Box<ListNode>>,
+) -> Option<Box<ListNode>> {
+    let mut dummy_head = ListNode::new(0);
+
+    let mut last = &mut dummy_head;
+
+    let mut carry = 0;
+    let mut p = l1;
+    let mut q = l2;
+    while p.is_some() || q.is_some() || carry > 0 {
+        p = Some(p.unwrap_or(Box::new(ListNode { val: 0, next: None })));
+        q = Some(q.unwrap_or(Box::new(ListNode { val: 0, next: None })));
+
+        let p_val = p.clone().unwrap().val;
+        let q_val = q.clone().unwrap().val;
+
+        let sum = p_val + q_val + carry;
+
+        let val = sum % 10;
+        carry = sum / 10;
+
+        let new_node = Box::new(ListNode { val, next: None });
+        last.next = Some(new_node);
+        last = last.next.as_mut().unwrap();
+
+        println!("val:{:?},carry:{:?}", val, carry);
+
+        p = p.unwrap().next;
+        q = q.unwrap().next;
+    }
+
+    return dummy_head.next;
 }
 
 pub fn add_two_numbers(
